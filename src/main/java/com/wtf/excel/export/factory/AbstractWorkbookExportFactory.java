@@ -19,16 +19,16 @@ import java.util.List;
  */
 public abstract class AbstractWorkbookExportFactory implements WorkbookExportFactory {
 
-    private final Workbook workbook;
+    private Workbook workbook;
 
-    private final Sheet sheet;
+    private Sheet sheet;
 
     private BeanParameter beanParameter;
 
     private WorkbookParameter workbookParameter;
 
 
-    public AbstractWorkbookExportFactory(BeanParameter beanParameter) {
+    public void init(BeanParameter beanParameter) {
         this.workbook = createWorkbook(beanParameter);
         this.sheet = getSheet(beanParameter);
         this.beanParameter = beanParameter;
@@ -78,17 +78,19 @@ public abstract class AbstractWorkbookExportFactory implements WorkbookExportFac
     private <T> void setProperty(T target, Row row) {
         Field[] fields = target.getClass().getDeclaredFields();
         for (Field field : fields) {
-            this.setCell(new PropertyParameter<>(workbookParameter, row, field, target));
+            this.createCell(new PropertyParameter<>(workbookParameter, row, field, target));
         }
     }
 
     // 设置标题、表头
     private void setHeader() {
-        setHeader(new PropertyParameter<>(workbookParameter));
+        createHeader(new PropertyParameter<>(workbookParameter));
     }
 
     // 获取工作簿
-    public <T> Workbook exportWorkbook(List<T> dataList) {
+    public <T> Workbook exportWorkbook(List<T> dataList, Class target) {
+        BeanParameter parameter = new BeanParameter(target);
+        init(parameter);
         // 设置表头
         setHeader();
         // 设置单元格
@@ -98,7 +100,7 @@ public abstract class AbstractWorkbookExportFactory implements WorkbookExportFac
 
 
 
-    protected abstract <T> void setCell(PropertyParameter<T> propertyParameter);
-    protected abstract <T> void setHeader(PropertyParameter<T> propertyParameter);
+    protected abstract <T> void createCell(PropertyParameter<T> propertyParameter);
+    protected abstract <T> void createHeader(PropertyParameter<T> propertyParameter);
 
 }

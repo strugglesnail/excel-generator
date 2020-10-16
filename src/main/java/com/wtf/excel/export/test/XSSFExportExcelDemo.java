@@ -1,7 +1,8 @@
 package com.wtf.excel.export.test;
 
-import com.wtf.tool.util.excel.export.annotation.HeaderExportExcel;
-import com.wtf.tool.util.excel.export.annotation.XSSFExportExcel;
+
+import com.wtf.excel.export.annotation.HeaderExportExcel;
+import com.wtf.excel.export.annotation.XSSFExportExcel;
 
 import java.util.Date;
 

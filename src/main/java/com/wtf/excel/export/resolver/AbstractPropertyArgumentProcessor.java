@@ -1,7 +1,7 @@
 package com.wtf.excel.export.resolver;
 
 
-import com.wtf.tool.util.excel.export.param.PropertyParameter;
+import com.wtf.excel.export.param.PropertyParameter;
 
 public abstract class AbstractPropertyArgumentProcessor {
 
