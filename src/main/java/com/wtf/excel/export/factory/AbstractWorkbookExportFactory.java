@@ -1,6 +1,5 @@
 package com.wtf.excel.export.factory;
 
-import com.wtf.excel.export.annotation.ExcelFormat;
 import com.wtf.excel.export.param.BeanParameter;
 import com.wtf.excel.export.param.PropertyParameter;
 import com.wtf.excel.export.param.WorkbookParameter;
@@ -10,7 +9,9 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.lang.reflect.Field;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author strugglesnail
@@ -18,6 +19,8 @@ import java.util.List;
  * @desc 导出工厂
  */
 public abstract class AbstractWorkbookExportFactory implements WorkbookExportFactory {
+
+    private Map<String, BeanParameter> parameterCache = new LinkedHashMap<>(256);
 
     private Workbook workbook;
 
@@ -89,7 +92,14 @@ public abstract class AbstractWorkbookExportFactory implements WorkbookExportFac
 
     // 获取工作簿
     public <T> Workbook exportWorkbook(List<T> dataList, Class target) {
-        BeanParameter parameter = new BeanParameter(target);
+        String cacheKey = target.getSimpleName();
+        BeanParameter parameter = parameterCache.get(cacheKey);
+        if (beanParameter == null) {
+            parameter = new BeanParameter(target);
+            parameterCache.put(cacheKey, parameter);
+        } else {
+            System.out.println("缓存：" + parameter);
+        }
         init(parameter);
         // 设置表头
         setHeader();

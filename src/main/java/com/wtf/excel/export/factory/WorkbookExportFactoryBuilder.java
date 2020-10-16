@@ -10,6 +10,6 @@ package com.wtf.excel.export.factory;
 public class WorkbookExportFactoryBuilder {
 
     public WorkbookExportFactory build(Class<?> clazz) {
-        return new DefaultWorkbookExportFactory(clazz);
+        return new DefaultWorkbookExportFactory();
     }
 }
