@@ -20,8 +20,7 @@ public class DefaultWorkbookExportFactory extends AbstractWorkbookExportFactory 
 
     private InvocableHandlerProperty handlerProperty = new InvocableHandlerProperty();
 
-    public DefaultWorkbookExportFactory(Class<?> target) {
-        super(new BeanParameter(target));
+    public DefaultWorkbookExportFactory() {
         // 初始化属性参数解析器
         this.initArgumentResolverComposite();
     }
@@ -42,12 +41,12 @@ public class DefaultWorkbookExportFactory extends AbstractWorkbookExportFactory 
     }
 
     @Override
-    protected <T> void setHeader(PropertyParameter<T> propertyParameter) {
+    protected <T> void createHeader(PropertyParameter<T> propertyParameter) {
         handlerProperty.handlerHeader(propertyParameter);
     }
 
     @Override
-    protected <T> void setCell(PropertyParameter<T> propertyParameter) {
+    protected <T> void createCell(PropertyParameter<T> propertyParameter) {
         handlerProperty.handlerProperty(propertyParameter);
     }
 }

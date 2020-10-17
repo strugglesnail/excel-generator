@@ -1,6 +1,5 @@
 package com.wtf.excel.export.factory;
 
-import com.wtf.excel.export.annotation.ExcelFormat;
 import com.wtf.excel.export.param.BeanParameter;
 import com.wtf.excel.export.param.PropertyParameter;
 import com.wtf.excel.export.param.WorkbookParameter;
@@ -11,6 +10,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author strugglesnail
@@ -19,16 +20,19 @@ import java.util.List;
  */
 public abstract class AbstractWorkbookExportFactory implements WorkbookExportFactory {
 
-    private final Workbook workbook;
 
-    private final Sheet sheet;
+    private final Map<String, BeanParameter> cacheParameter = new ConcurrentHashMap(256);
+
+    private Workbook workbook;
+
+    private Sheet sheet;
 
     private BeanParameter beanParameter;
 
     private WorkbookParameter workbookParameter;
 
 
-    public AbstractWorkbookExportFactory(BeanParameter beanParameter) {
+    public void init(BeanParameter beanParameter) {
         this.workbook = createWorkbook(beanParameter);
         this.sheet = getSheet(beanParameter);
         this.beanParameter = beanParameter;
@@ -78,17 +82,24 @@ public abstract class AbstractWorkbookExportFactory implements WorkbookExportFac
     private <T> void setProperty(T target, Row row) {
         Field[] fields = target.getClass().getDeclaredFields();
         for (Field field : fields) {
-            this.setCell(new PropertyParameter<>(workbookParameter, row, field, target));
+            this.createCell(new PropertyParameter<>(workbookParameter, row, field, target));
         }
     }
 
     // 设置标题、表头
     private void setHeader() {
-        setHeader(new PropertyParameter<>(workbookParameter));
+        createHeader(new PropertyParameter<>(workbookParameter));
     }
 
     // 获取工作簿
-    public <T> Workbook exportWorkbook(List<T> dataList) {
+    public <T> Workbook exportWorkbook(List<T> dataList, Class target) {
+        String cacheKey = target.getSimpleName();
+        BeanParameter parameter = cacheParameter.get(cacheKey);
+        if (parameter == null) {
+            parameter = new BeanParameter(target);
+            cacheParameter.put(cacheKey, parameter);
+        }
+        init(parameter);
         // 设置表头
         setHeader();
         // 设置单元格
@@ -98,7 +109,7 @@ public abstract class AbstractWorkbookExportFactory implements WorkbookExportFac
 
 
 
-    protected abstract <T> void setCell(PropertyParameter<T> propertyParameter);
-    protected abstract <T> void setHeader(PropertyParameter<T> propertyParameter);
+    protected abstract <T> void createCell(PropertyParameter<T> propertyParameter);
+    protected abstract <T> void createHeader(PropertyParameter<T> propertyParameter);
 
 }
