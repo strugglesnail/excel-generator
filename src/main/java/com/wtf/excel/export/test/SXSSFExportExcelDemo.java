@@ -3,10 +3,11 @@ package com.wtf.excel.export.test;
 
 import com.wtf.excel.export.annotation.HeaderExportExcel;
 import com.wtf.excel.export.annotation.SXSSFExportExcel;
+import com.wtf.excel.export.generator.DefaultStyleGenerator;
 
 import java.util.Date;
 
-@HeaderExportExcel(rowIndex = 10, colIndex = 5, title = "复杂表头")
+@HeaderExportExcel(rowIndex = 1, colIndex = 5, title = "复杂表头", styleGenerator = DefaultStyleGenerator.class)
 public class SXSSFExportExcelDemo {
 
     @SXSSFExportExcel(title = {"文本名称"}, offset = {"1,3,0,0"}, index = 0)
