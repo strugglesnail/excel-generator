@@ -6,12 +6,17 @@ import com.wtf.excel.imp.handler.ImportDataHandler;
 import java.io.InputStream;
 import java.util.List;
 
+/**
+ * @auther strugglesnail
+ * @date 2020/10/29 19:24
+ * @desc
+ */
 public class WorkbookImportFactoryBuilder<T> {
 
     //
     private InputStream stream;
     private Class<T> target;
-    private WorkbookImportFactory factory;
+    private static WorkbookImportFactory factory;
 
     private WorkbookImportFactoryBuilder(Builder builder) {
         stream = builder.stream;
