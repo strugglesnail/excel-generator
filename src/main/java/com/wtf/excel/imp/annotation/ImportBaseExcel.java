@@ -1,8 +1,5 @@
 package com.wtf.excel.imp.annotation;
 
-import com.wtf.excel.imp.handler.DefaultImportDataHandler;
-import com.wtf.excel.imp.handler.ImportDataHandler;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -25,5 +22,5 @@ public @interface ImportBaseExcel {
     int colIndex() default 0;
 
     // 处理器：给一个处理导入数据的机会
-    Class<? extends ImportDataHandler> handler() default DefaultImportDataHandler.class;
+//    Class<? extends ImportDataHandler> handler() default DefaultImportDataHandler.class;
 }

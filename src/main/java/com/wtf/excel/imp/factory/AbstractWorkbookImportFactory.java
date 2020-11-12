@@ -33,9 +33,7 @@ public abstract class AbstractWorkbookImportFactory implements WorkbookImportFac
         if (Objects.isNull(annotation)) {
             throw new IllegalArgumentException(target.getSimpleName() + " class missing @ImportBaseExcel annotation");
         }
-        WorkbookParameter parameter = new WorkbookParameter(dataSource, annotation.sheetName(), annotation.rowIndex(), annotation.colIndex(), annotation.handler());
-//        this.parameter = parameter;
-        return parameter;
+        return new WorkbookParameter(dataSource, annotation.sheetName(), annotation.rowIndex(), annotation.colIndex());
     }
 
     //获取Excel数据集合
@@ -43,9 +41,6 @@ public abstract class AbstractWorkbookImportFactory implements WorkbookImportFac
         String sheetName = parameter.getSheetName();
         int rowIndex = parameter.getRowIndex();
         int colIndex = parameter.getColIndex();
-//        if (parameter.getFile() == null || parameter.getFile().isEmpty()) {
-//            throw new IllegalArgumentException("The MultipartFile can not be empty");
-//        }
         Map<Integer, List<Object>> singleSheetData = null;
         try {
             Workbook book = createWorkbook(parameter.getDataSource());

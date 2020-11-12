@@ -42,18 +42,18 @@ public class WorkbookImportFactoryBuilder<T> {
         public Builder() {
         }
 
-        public Builder stream(InputStream val) {
-            stream = val;
+        public Builder stream(InputStream inputStream) {
+            stream = inputStream;
             return this;
         }
 
-        public Builder target(Class<T> val) {
-            target = val;
+        public Builder target(Class<T> c) {
+            target = c;
             return this;
         }
 
-        public Builder factory(WorkbookImportFactory val) {
-            factory = val;
+        public Builder factory(WorkbookImportFactory workbookImportFactory) {
+            factory = workbookImportFactory;
             return this;
         }
 

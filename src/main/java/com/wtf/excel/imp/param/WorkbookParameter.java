@@ -21,13 +21,17 @@ public class WorkbookParameter {
     // 导入数据处理器
     private ImportDataHandler handler;
 
+    public WorkbookParameter(InputStream dataSource, String sheetName, int rowIndex, int colIndex) {
+        this(dataSource, sheetName, rowIndex, colIndex, null);
+    }
+
     public WorkbookParameter(InputStream dataSource, String sheetName, int rowIndex, int colIndex, Class<? extends ImportDataHandler> handler) {
         this.dataSource = dataSource;
         this.sheetName = sheetName;
         this.rowIndex = rowIndex;
         this.colIndex = colIndex;
         try {
-            this.handler = handler.newInstance();
+            this.handler = handler == null ? null : handler.newInstance();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
