@@ -6,7 +6,11 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-
+/**
+ * @author strugglesnail
+ * @date 2020/11/12 9:10
+ * @desc 属性参数
+ */
 public class PropertyParameter<T> {
 
     private WorkbookParameter workbookParameter;
@@ -26,8 +30,8 @@ public class PropertyParameter<T> {
     // 字段的所属类类型
     private Class<?> containingClass;
 
-    // 字段类型
-    private Class<?> fieldType;
+    // 字段转换器
+//    private Converter converter;
 
     // 字段注解
     private Annotation[] fieldAnnotations;
@@ -45,8 +49,8 @@ public class PropertyParameter<T> {
         this.row = row;
         this.target = target;
         this.containingClass = target == null ? null : target.getClass();
-//        this.fieldType = fields[0].getDeclaringClass();
         this.fieldAnnotations = field == null ? fields[0].getDeclaredAnnotations() : field.getDeclaredAnnotations();
+//        this.converter = field == null ? field.getDeclaredAnnotation()
     }
 
     // 判断是否有指定的注解类型
@@ -82,9 +86,6 @@ public class PropertyParameter<T> {
         return containingClass;
     }
 
-    public Class<?> getFieldType() {
-        return fieldType;
-    }
 
     public Annotation[] getFieldAnnotations() {
         return fieldAnnotations;

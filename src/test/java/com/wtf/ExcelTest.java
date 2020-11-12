@@ -1,9 +1,9 @@
 package com.wtf;
 
+import com.wtf.demo.HSSFExportExcelDemo;
+import com.wtf.demo.SXSSFExportExcelDemo;
+import com.wtf.demo.XSSFExportExcelDemo;
 import com.wtf.excel.export.factory.DefaultWorkbookExportFactory;
-import com.wtf.excel.export.test.HSSFExportExcelDemo;
-import com.wtf.excel.export.test.SXSSFExportExcelDemo;
-import com.wtf.excel.export.test.XSSFExportExcelDemo;
 import com.wtf.excel.imp.factory.WorkbookImportFactoryBuilder;
 import com.wtf.excel.imp.test.ImportDemo;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -24,7 +24,7 @@ public class ExcelTest {
             HSSFExportExcelDemo excelDemo = new HSSFExportExcelDemo();
             excelDemo.setName("文件导出" + i);
             excelDemo.setSheetName("sheet名称" + i);
-            excelDemo.setType("excel类型" + i);
+            excelDemo.setType(i % 2 == 0 ? 0 : 1);
             excelDemo.setDate(new Date());
             demos.add(excelDemo);
         }
@@ -39,7 +39,7 @@ public class ExcelTest {
             XSSFExportExcelDemo excelDemo = new XSSFExportExcelDemo();
             excelDemo.setName("文件导出" + i);
             excelDemo.setSheetName("sheet名称" + i);
-            excelDemo.setType("excel类型" + i);
+            excelDemo.setType(i % 2 == 0 ? 0 : 1);
             excelDemo.setDate(new Date());
             demos.add(excelDemo);
         }
@@ -54,7 +54,7 @@ public class ExcelTest {
             SXSSFExportExcelDemo excelDemo = new SXSSFExportExcelDemo();
             excelDemo.setName("文件导出" + i);
             excelDemo.setSheetName("sheet名称" + i);
-            excelDemo.setType("excel类型" + i);
+            excelDemo.setType(i % 2 == 0 ? 0 : 1);
             excelDemo.setDate(new Date());
             demos.add(excelDemo);
         }
@@ -64,7 +64,8 @@ public class ExcelTest {
     // Excel导入
     @Test
     public void testImport() throws FileNotFoundException {
-        InputStream stream = new FileInputStream(new File("C:\\Users\\86188\\Desktop\\ExcelDemo.xlsx"));
+        // 86188
+        InputStream stream = new FileInputStream(new File("C:\\Users\\user\\Desktop\\ExcelDemo.xlsx"));
         WorkbookImportFactoryBuilder<ImportDemo> builder = new WorkbookImportFactoryBuilder.Builder()
                 .stream(stream)
                 .target(ImportDemo.class)
@@ -80,7 +81,8 @@ public class ExcelTest {
     private void getTestExcel(List<?> demos, Class c) throws IOException {
         DefaultWorkbookExportFactory factory = new DefaultWorkbookExportFactory();
         Workbook workbook = factory.exportWorkbook(demos, c);
-        FileOutputStream outputStream = new FileOutputStream("C:\\Users\\86188\\Desktop\\文件导出模板.xlsx");
+        // 86188
+        FileOutputStream outputStream = new FileOutputStream("C:\\Users\\user\\Desktop\\文件导出模板.xlsx");
         workbook.write(outputStream);
         outputStream.close();
     }

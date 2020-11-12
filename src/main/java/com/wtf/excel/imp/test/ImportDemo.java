@@ -11,7 +11,7 @@ import java.util.Date;
  * @date 2020/10/19 21:57
  * @desc
  */
-@ImportBaseExcel(sheetName = "ExcelDemo", rowIndex = 2, handler = CustomImportDataHandler.class)
+@ImportBaseExcel(sheetName = "ExcelDemo", rowIndex = 2)
 public class ImportDemo {
 
     @ImportExcel(index = 0)

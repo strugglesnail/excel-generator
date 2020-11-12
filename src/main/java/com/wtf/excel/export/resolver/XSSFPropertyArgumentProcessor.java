@@ -1,6 +1,8 @@
 package com.wtf.excel.export.resolver;
 
+import com.wtf.excel.export.annotation.SXSSFExportExcel;
 import com.wtf.excel.export.annotation.XSSFExportExcel;
+import com.wtf.excel.export.converter.Converter;
 import com.wtf.excel.export.generator.StyleGenerator;
 import com.wtf.excel.export.param.PropertyParameter;
 import org.apache.commons.lang3.StringUtils;
@@ -118,7 +120,13 @@ public class XSSFPropertyArgumentProcessor extends AbstractPropertyArgumentProce
                         cell.setCellValue((Date) methodValue);
                     }
                 } else {
-                    cell.setCellValue(methodValue.toString());
+                    Converter converter = parameter.getConverter();
+                    String excelData = converter.convertToExcelData(methodValue.toString());
+                    if (StringUtils.isNotBlank(excelData)) {
+                        cell.setCellValue(excelData);
+                    } else {
+                        cell.setCellValue(methodValue.toString());
+                    }
                 }
             }
             parameter.getStyleGenerator().setCellColor(style);
@@ -148,6 +156,7 @@ public class XSSFPropertyArgumentProcessor extends AbstractPropertyArgumentProce
         private final int width;
         private final String pattern;
         private final DataFormat dateFormat;
+        private final Converter converter;
 
 
         private final T target;
@@ -165,6 +174,7 @@ public class XSSFPropertyArgumentProcessor extends AbstractPropertyArgumentProce
             this.width = annotation.width();
             this.pattern = annotation.pattern();
             this.dateFormat = parameter.getWorkbook().createDataFormat();
+            this.converter = getConverter(annotation);
 
             int colIndex = parameter.getWorkbookParameter().getBeanParameter().getColIndex();
             this.target = parameter.getTarget();
@@ -219,6 +229,23 @@ public class XSSFPropertyArgumentProcessor extends AbstractPropertyArgumentProce
         public Workbook getWorkbook() {
             return workbook;
         }
+
+        public Converter getConverter() {
+            return converter;
+        }
+
+        private Converter getConverter(XSSFExportExcel xssfExportExcel) {
+            Converter converter = null;
+            try {
+                converter = xssfExportExcel.converter().newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            return converter;
+        }
+
     }
 
 }

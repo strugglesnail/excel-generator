@@ -1,6 +1,7 @@
 package com.wtf.excel.export.resolver;
 
 import com.wtf.excel.export.annotation.SXSSFExportExcel;
+import com.wtf.excel.export.converter.Converter;
 import com.wtf.excel.export.generator.StyleGenerator;
 import com.wtf.excel.export.param.PropertyParameter;
 import org.apache.commons.lang3.StringUtils;
@@ -94,12 +95,12 @@ public class SXSSFPropertyArgumentProcessor extends AbstractPropertyArgumentProc
                 row = sheet.createRow(index + rowIndex);
             }
 
-            System.out.println("------------" + index + row);
+//            System.out.println("------------" + index + row);
             for (OffsetModel offsetModel : v) {
                 Cell cell = row.createCell(offsetModel.getStartCol() + colIndex);
                 cell.setCellValue(offsetModel.getTitle());
                 cell.setCellStyle(cellStyle);
-                System.out.println(offsetModel.getTitle() + "---" + offsetModel.getStartCol());
+//                System.out.println(offsetModel.getTitle() + "---" + offsetModel.getStartCol());
             }
         });
     }
@@ -151,7 +152,13 @@ public class SXSSFPropertyArgumentProcessor extends AbstractPropertyArgumentProc
                         cell.setCellValue((Date) methodValue);
                     }
                 } else {
-                    cell.setCellValue(methodValue.toString());
+                    Converter converter = parameter.getConverter();
+                    String excelData = converter.convertToExcelData(methodValue.toString());
+                    if (StringUtils.isNotBlank(excelData)) {
+                        cell.setCellValue(excelData);
+                    } else {
+                        cell.setCellValue(methodValue.toString());
+                    }
                 }
             }
             parameter.getStyleGenerator().setCellBorder(style);
@@ -170,6 +177,7 @@ public class SXSSFPropertyArgumentProcessor extends AbstractPropertyArgumentProc
         private final int width;
         private final String pattern ;
         private final StyleGenerator styleGenerator;
+        private final Converter converter;
 
         private final T target;
         private final Workbook workbook;
@@ -185,6 +193,7 @@ public class SXSSFPropertyArgumentProcessor extends AbstractPropertyArgumentProc
             this.width = annotation.width();
             this.pattern = annotation.pattern();
             this.dateFormat = parameter.getWorkbook().createDataFormat();
+            this.converter = getConverter(annotation);
 
             this.target = parameter.getTarget();
             int colIndex = parameter.getWorkbookParameter().getBeanParameter().getColIndex();
@@ -193,6 +202,8 @@ public class SXSSFPropertyArgumentProcessor extends AbstractPropertyArgumentProc
             this.cellStyle = parameter.getWorkbookParameter().getCellStyle();
             this.styleGenerator = parameter.getWorkbookParameter().getBeanParameter().getStyleGenerator();
         }
+
+
 
         public int getIndex() {
             return index;
@@ -236,6 +247,22 @@ public class SXSSFPropertyArgumentProcessor extends AbstractPropertyArgumentProc
 
         public Workbook getWorkbook() {
             return workbook;
+        }
+
+        public Converter getConverter() {
+            return converter;
+        }
+
+        private Converter getConverter(SXSSFExportExcel sxssfExportExcel) {
+            Converter converter = null;
+            try {
+                converter = sxssfExportExcel.converter().newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            return converter;
         }
     }
 

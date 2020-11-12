@@ -1,5 +1,8 @@
 package com.wtf.excel.export.annotation;
 
+import com.wtf.excel.export.converter.Converter;
+import com.wtf.excel.export.converter.DefaultConverter;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -21,4 +24,6 @@ public @interface XSSFExportExcel {
     String pattern() default "";
     // 宽度 默认20
     int width() default 20;
+    // 类型转换
+    Class<? extends Converter> converter() default DefaultConverter.class;
 }

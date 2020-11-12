@@ -1,6 +1,7 @@
-package com.wtf.excel.export.test;
+package com.wtf.demo;
 
 
+import com.wtf.converter.TypeConverter;
 import com.wtf.excel.export.annotation.HSSFExportExcel;
 import com.wtf.excel.export.annotation.HeaderExportExcel;
 
@@ -15,8 +16,8 @@ public class HSSFExportExcelDemo {
     @HSSFExportExcel(title = "sheet名称", index = 1)
     private String sheetName;
 
-    @HSSFExportExcel(title = "文本类型", index = 2)
-    private String type;
+    @HSSFExportExcel(title = "文本类型", index = 2, converter = TypeConverter.class)
+    private int type;
 
     @HSSFExportExcel(title = "时间", index = 3, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date date;
@@ -37,11 +38,11 @@ public class HSSFExportExcelDemo {
         this.sheetName = sheetName;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 
