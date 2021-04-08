@@ -2,7 +2,10 @@ package com.wtf.excel.export.factory;
 
 import com.wtf.excel.export.InvocableHandlerProperty;
 import com.wtf.excel.export.PropertyArgumentResolverComposite;
+import com.wtf.excel.export.annotation.ExcelFormat;
+import com.wtf.excel.export.generator.StyleGenerator;
 import com.wtf.excel.export.param.BeanParameter;
+import com.wtf.excel.export.param.HeaderParameter;
 import com.wtf.excel.export.param.PropertyParameter;
 import com.wtf.excel.export.param.WorkbookParameter;
 import com.wtf.excel.export.resolver.PropertyArgumentResolver;
@@ -33,21 +36,20 @@ public abstract class AbstractWorkbookExportFactory implements WorkbookExportFac
 
     private Sheet sheet;
 
+    private HeaderParameter headerParameter;
+
     private BeanParameter beanParameter;
 
     private WorkbookParameter workbookParameter;
 
-    private void initArgumentResolverComposite() {
-        propertyArgumentResolverComposite.addResolvers(getDefaultPropertyArgumentResolvers());
-        handlerProperty.setPropertyArgumentResolverComposite(this.propertyArgumentResolverComposite);
-    }
 
-    public void init(BeanParameter beanParameter) {
+    public void initParameter(BeanParameter beanParameter) {
         this.workbook = createWorkbook(beanParameter);
         this.sheet = getSheet(beanParameter);
         this.beanParameter = beanParameter;
         this.workbookParameter = new WorkbookParameter(workbook, sheet, workbook.createCellStyle(), workbook.getCreationHelper(), beanParameter);
-
+        propertyArgumentResolverComposite.addResolvers(getDefaultPropertyArgumentResolvers());
+        handlerProperty.setPropertyArgumentResolverComposite(this.propertyArgumentResolverComposite);
     }
 
     @Override
@@ -76,7 +78,9 @@ public abstract class AbstractWorkbookExportFactory implements WorkbookExportFac
     }
 
     protected final Sheet getSheet(BeanParameter beanParameter) {
-        return workbook.createSheet(beanParameter.getSheetName());
+        Sheet sheet = workbook.createSheet(beanParameter.getSheetName());
+        workbook.setSheetName(beanParameter.getSheetIndex(), beanParameter.getSheetName());
+        return sheet;
     }
 
     // 填充每一行
@@ -102,19 +106,24 @@ public abstract class AbstractWorkbookExportFactory implements WorkbookExportFac
     }
 
     // 获取工作簿
-    public <T> Workbook exportWorkbook(List<T> dataList, Class target) {
-        String cacheKey = target.getSimpleName();
-        BeanParameter parameter = cacheParameter.get(cacheKey);
-        if (parameter == null) {
-            parameter = new BeanParameter(target);
-            cacheParameter.put(cacheKey, parameter);
-        }
-        init(parameter);
+    public <T> AbstractWorkbookExportFactory exportWorkbook(List<T> dataList, Class target) {
+        // 目标类信息
+        BeanParameter parameter = new BeanParameter(target);
+        parameter.setSheetName(headerParameter.getSheetName());
+        parameter.setSheetIndex(headerParameter.getSheetIndex());
+        parameter.setTitle(headerParameter.getTitle());
+        parameter.setRowIndex(headerParameter.getRowIndex());
+        parameter.setColIndex(headerParameter.getColIndex());
+        parameter.setFormat(headerParameter.getFormat());
+        parameter.setStyleGenerator(headerParameter.getStyleGenerator());
+
+        System.out.println(headerParameter);
+        initParameter(parameter);
         // 设置表头
         setHeader();
         // 设置单元格
         setRow(dataList);
-        return workbook;
+        return this;
     }
 
 
@@ -130,4 +139,44 @@ public abstract class AbstractWorkbookExportFactory implements WorkbookExportFac
     }
 
     protected abstract List<PropertyArgumentResolver> getDefaultPropertyArgumentResolvers();
+
+    protected HeaderParameter getHeaderParameter() {
+        return headerParameter;
+    }
+
+
+    public AbstractWorkbookExportFactory sheetName(String sheetName) {
+        getHeaderParameter().setSheetName(sheetName);
+        return this;
+    }
+
+    public AbstractWorkbookExportFactory sheetIndex(int sheetIndex) {
+        getHeaderParameter().setSheetIndex(sheetIndex);
+        return this;
+    }
+
+    public AbstractWorkbookExportFactory title(String title) {
+        getHeaderParameter().setTitle(title);
+        return this;
+    }
+
+    public AbstractWorkbookExportFactory rowIndex(int rowIndex) {
+        getHeaderParameter().setRowIndex(rowIndex);
+        return this;
+    }
+
+    public AbstractWorkbookExportFactory colIndex(int colIndex) {
+        getHeaderParameter().setColIndex(colIndex);
+        return this;
+    }
+
+    public AbstractWorkbookExportFactory format(ExcelFormat format) {
+        getHeaderParameter().setFormat(format);
+        return this;
+    }
+
+    public AbstractWorkbookExportFactory styleGenerator(Class<? extends StyleGenerator> styleGenerator) {
+        getHeaderParameter().setStyleGenerator(styleGenerator);
+        return this;
+    }
 }

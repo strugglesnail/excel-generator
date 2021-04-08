@@ -54,10 +54,10 @@ public class BeanParameter {
         this.fields = resourceClass.getDeclaredFields();
         HeaderExportExcel header = resourceClass.getDeclaredAnnotation(HeaderExportExcel.class);
         if (header != null) {
-            int maxRow = getMaxRow(fields);
             // 备份原有的下标：主要用于复杂表头行设置
             this.originalIndex = header.rowIndex();
             // 用于数据单元格设置
+            int maxRow = getMaxRow(fields);
             this.rowIndex = header.rowIndex() + maxRow;
             this.title = header.title();
             // 如果存在标题，则行下标 + 1
@@ -120,20 +120,30 @@ public class BeanParameter {
         return fields;
     }
 
-    public String getSheetName() {
-        return sheetName;
-    }
-
-    public int getSheetIndex() {
-        return sheetIndex;
-    }
-
     public int getRowIndex() {
         return rowIndex;
     }
 
     public int getOriginalIndex() {
         return originalIndex;
+    }
+
+    public ExcelFormat getFormat() {
+        return format;
+    }
+
+    public StyleGenerator getStyleGenerator() {
+        return styleGenerator;
+    }
+
+
+
+    public String getSheetName() {
+        return sheetName;
+    }
+
+    public int getSheetIndex() {
+        return sheetIndex;
     }
 
     public int getColIndex() {
@@ -144,11 +154,43 @@ public class BeanParameter {
         return title;
     }
 
-    public ExcelFormat getFormat() {
-        return format;
+    public void setRowIndex(int rowIndex) {
+        this.originalIndex = rowIndex;
+        int maxRow = getMaxRow(fields); // 复杂表头情况
+        this.rowIndex = rowIndex + maxRow;
     }
 
-    public StyleGenerator getStyleGenerator() {
-        return styleGenerator;
+    public void setColIndex(int colIndex) {
+        this.colIndex = colIndex;
+    }
+
+    public void setSheetName(String sheetName) {
+        this.sheetName = sheetName;
+    }
+
+    public void setSheetIndex(int sheetIndex) {
+        this.sheetIndex = sheetIndex;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+        // 如果存在标题，则行下标 + 1
+        if (StringUtils.isNotBlank(title)) {
+            this.rowIndex ++;
+        }
+    }
+
+    public void setFormat(ExcelFormat format) {
+        this.format = format;
+    }
+
+    public void setStyleGenerator(Class<? extends StyleGenerator> styleGenerator) {
+        try {
+            this.styleGenerator = styleGenerator.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 }
