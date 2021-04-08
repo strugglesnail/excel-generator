@@ -43,11 +43,13 @@ public class DefaultWorkbookExportFactory extends AbstractWorkbookExportFactory 
         return resolvers;
     }
 
+    // 创建header
     @Override
     protected <T> void createHeader(PropertyParameter<T> propertyParameter) {
         handlerProperty.handlerHeader(propertyParameter);
     }
 
+    // 创建单元格
     @Override
     protected <T> void createCell(PropertyParameter<T> propertyParameter) {
         handlerProperty.handlerProperty(propertyParameter);
