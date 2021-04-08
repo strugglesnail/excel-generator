@@ -19,23 +19,25 @@ import java.util.List;
  */
 public class DefaultWorkbookExportFactory extends AbstractWorkbookExportFactory {
 
-    private PropertyArgumentResolverComposite propertyArgumentResolverComposite = new PropertyArgumentResolverComposite();
+    // sheet名称
+    private String sheetName = "file export";
+    // 标题
+    private String title = "";
+    // 行的起始位置
+    private int rowIndex = 0;
+    // 列的起始位置
+    private int colIndex = 0;
 
-    private InvocableHandlerProperty handlerProperty = new InvocableHandlerProperty();
-
-    public DefaultWorkbookExportFactory() {
-        // 初始化属性参数解析器
-        this.initArgumentResolverComposite();
-    }
-
-
-    private void initArgumentResolverComposite() {
-        propertyArgumentResolverComposite = (new PropertyArgumentResolverComposite()).addResolvers(getDefaultPropertyArgumentResolvers());
-        handlerProperty.setPropertyArgumentResolverComposite(this.propertyArgumentResolverComposite);
+    private DefaultWorkbookExportFactory(Builder builder) {
+        sheetName = builder.sheetName;
+        title = builder.title;
+        rowIndex = builder.rowIndex;
+        colIndex = builder.colIndex;
     }
 
     // 注册属性解析器
-    private List<PropertyArgumentResolver> getDefaultPropertyArgumentResolvers() {
+    @Override
+    protected List<PropertyArgumentResolver> getDefaultPropertyArgumentResolvers() {
         List<PropertyArgumentResolver> resolvers = new ArrayList<>();
         resolvers.add(new HSSFPropertyArgumentProcessor());
         resolvers.add(new XSSFPropertyArgumentProcessor());
@@ -43,15 +45,45 @@ public class DefaultWorkbookExportFactory extends AbstractWorkbookExportFactory 
         return resolvers;
     }
 
-    // 创建header
-    @Override
-    protected <T> void createHeader(PropertyParameter<T> propertyParameter) {
-        handlerProperty.handlerHeader(propertyParameter);
-    }
 
-    // 创建单元格
-    @Override
-    protected <T> void createCell(PropertyParameter<T> propertyParameter) {
-        handlerProperty.handlerProperty(propertyParameter);
+    public static final class Builder {
+        private String sheetName;
+        private String title;
+        private int rowIndex;
+        private int colIndex;
+
+        public Builder() {
+        }
+
+        public Builder sheetName(String val) {
+            sheetName = val;
+            return this;
+        }
+
+        public Builder title(String val) {
+            title = val;
+            return this;
+        }
+
+        public Builder rowIndex(int val) {
+            rowIndex = val;
+            return this;
+        }
+
+        public Builder colIndex(int val) {
+            colIndex = val;
+            return this;
+        }
+
+        public DefaultWorkbookExportFactory build() {
+            return new DefaultWorkbookExportFactory(this);
+        }
+    }
+}
+
+class T {
+    public static void main(String[] args) {
+        DefaultWorkbookExportFactory.Builder builder = new DefaultWorkbookExportFactory.Builder();
+        builder.colIndex(0).build().exportWorkbook(null, null)
     }
 }

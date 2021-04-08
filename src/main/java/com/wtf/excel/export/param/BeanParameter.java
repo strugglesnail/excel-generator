@@ -26,6 +26,8 @@ public class BeanParameter {
 
     // sheet名称
     private String sheetName;
+    // sheet下标
+    private int sheetIndex;
 
     // 标题
     private String title;
@@ -120,6 +122,10 @@ public class BeanParameter {
 
     public String getSheetName() {
         return sheetName;
+    }
+
+    public int getSheetIndex() {
+        return sheetIndex;
     }
 
     public int getRowIndex() {

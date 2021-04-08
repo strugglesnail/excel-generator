@@ -1,8 +1,11 @@
 package com.wtf.excel.export.factory;
 
+import com.wtf.excel.export.InvocableHandlerProperty;
+import com.wtf.excel.export.PropertyArgumentResolverComposite;
 import com.wtf.excel.export.param.BeanParameter;
 import com.wtf.excel.export.param.PropertyParameter;
 import com.wtf.excel.export.param.WorkbookParameter;
+import com.wtf.excel.export.resolver.PropertyArgumentResolver;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -20,6 +23,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class AbstractWorkbookExportFactory implements WorkbookExportFactory {
 
+    private PropertyArgumentResolverComposite propertyArgumentResolverComposite = new PropertyArgumentResolverComposite();
+
+    private InvocableHandlerProperty handlerProperty = new InvocableHandlerProperty();
 
     private final Map<String, BeanParameter> cacheParameter = new ConcurrentHashMap(256);
 
@@ -31,6 +37,10 @@ public abstract class AbstractWorkbookExportFactory implements WorkbookExportFac
 
     private WorkbookParameter workbookParameter;
 
+    private void initArgumentResolverComposite() {
+        propertyArgumentResolverComposite.addResolvers(getDefaultPropertyArgumentResolvers());
+        handlerProperty.setPropertyArgumentResolverComposite(this.propertyArgumentResolverComposite);
+    }
 
     public void init(BeanParameter beanParameter) {
         this.workbook = createWorkbook(beanParameter);
@@ -109,7 +119,15 @@ public abstract class AbstractWorkbookExportFactory implements WorkbookExportFac
 
 
 
-    protected abstract <T> void createCell(PropertyParameter<T> propertyParameter);
-    protected abstract <T> void createHeader(PropertyParameter<T> propertyParameter);
+    // 创建header
+    protected <T> void createHeader(PropertyParameter<T> propertyParameter) {
+        handlerProperty.handlerHeader(propertyParameter);
+    }
 
+    // 创建单元格
+    protected <T> void createCell(PropertyParameter<T> propertyParameter) {
+        handlerProperty.handlerProperty(propertyParameter);
+    }
+
+    protected abstract List<PropertyArgumentResolver> getDefaultPropertyArgumentResolvers();
 }
