@@ -36,15 +36,18 @@ public abstract class AbstractWorkbookExportFactory implements WorkbookExportFac
 
     private Sheet sheet;
 
-    private HeaderParameter headerParameter;
+    private final HeaderParameter headerParameter = new HeaderParameter();
 
     private BeanParameter beanParameter;
 
     private WorkbookParameter workbookParameter;
 
+    public AbstractWorkbookExportFactory() {
+        workbook = new SXSSFWorkbook();
+    }
 
     public void initParameter(BeanParameter beanParameter) {
-        this.workbook = createWorkbook(beanParameter);
+//        this.workbook = createWorkbook(beanParameter);
         this.sheet = getSheet(beanParameter);
         this.beanParameter = beanParameter;
         this.workbookParameter = new WorkbookParameter(workbook, sheet, workbook.createCellStyle(), workbook.getCreationHelper(), beanParameter);
@@ -108,16 +111,8 @@ public abstract class AbstractWorkbookExportFactory implements WorkbookExportFac
     // 获取工作簿
     public <T> AbstractWorkbookExportFactory exportWorkbook(List<T> dataList, Class target) {
         // 目标类信息
-        BeanParameter parameter = new BeanParameter(target);
-        parameter.setSheetName(headerParameter.getSheetName());
-        parameter.setSheetIndex(headerParameter.getSheetIndex());
-        parameter.setTitle(headerParameter.getTitle());
-        parameter.setRowIndex(headerParameter.getRowIndex());
-        parameter.setColIndex(headerParameter.getColIndex());
-        parameter.setFormat(headerParameter.getFormat());
-        parameter.setStyleGenerator(headerParameter.getStyleGenerator());
-
-        System.out.println(headerParameter);
+        BeanParameter parameter = new BeanParameter(target, headerParameter);
+        // 初始化参数
         initParameter(parameter);
         // 设置表头
         setHeader();

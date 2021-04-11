@@ -91,7 +91,7 @@ public class ExcelTest {
     private void getTestExcel2(List<?> demos, Class c, String sheetName, int sheetIndex, String sheetName1, int sheetIndex1) throws IOException {
         DefaultWorkbookExportFactory factory = new DefaultWorkbookExportFactory();
         Workbook workbook = factory
-                .sheetName(sheetName).sheetIndex(sheetIndex).exportWorkbook(demos, c)
+                .sheetName(sheetName).sheetIndex(sheetIndex).title("导出").exportWorkbook(demos, c)
                 .sheetName(sheetName1).sheetIndex(sheetIndex1).exportWorkbook(demos, c).getWorkbook();
         // 86188
         FileOutputStream outputStream = new FileOutputStream("C:\\Users\\86188\\Desktop\\文件导出模板.xlsx");

@@ -46,29 +46,30 @@ public class BeanParameter {
     private Field[] fields;
 
 
-    public BeanParameter() {}
+//    public BeanParameter() {}
 
-    public BeanParameter(Class<?> resourceClass) {
+    public BeanParameter(Class<?> resourceClass, HeaderParameter header) {
         this.classType = resourceClass;
         this.classAnnotations = resourceClass.getAnnotations();
         this.fields = resourceClass.getDeclaredFields();
-        HeaderExportExcel header = resourceClass.getDeclaredAnnotation(HeaderExportExcel.class);
+//        HeaderExportExcel header = resourceClass.getDeclaredAnnotation(HeaderExportExcel.class);
         if (header != null) {
             // 备份原有的下标：主要用于复杂表头行设置
-            this.originalIndex = header.rowIndex();
+            this.originalIndex = header.getRowIndex();
             // 用于数据单元格设置
             int maxRow = getMaxRow(fields);
-            this.rowIndex = header.rowIndex() + maxRow;
-            this.title = header.title();
+            this.rowIndex = header.getRowIndex() + maxRow;
+            this.title = header.getTitle();
             // 如果存在标题，则行下标 + 1
             if (StringUtils.isNotBlank(this.title)) {
                 this.rowIndex ++;
             }
-            this.colIndex = header.colIndex();
-            this.sheetName = header.sheetName();
-            this.format = header.format();
+            this.colIndex = header.getColIndex();
+            this.sheetName = header.getSheetName();
+            this.sheetIndex = header.getSheetIndex();
+            this.format = header.getFormat();
             try {
-                this.styleGenerator = header.styleGenerator().newInstance();
+                this.styleGenerator = header.getStyleGenerator().newInstance();
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {

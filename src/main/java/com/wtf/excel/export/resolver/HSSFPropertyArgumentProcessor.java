@@ -63,16 +63,22 @@ public class HSSFPropertyArgumentProcessor extends AbstractPropertyArgumentProce
         String headerTitle = parameter.getWorkbookParameter().getBeanParameter().getTitle();
 
         // 设置标题
-        int maxIndex = this.getMaxIndex(parameter);
-        CellRangeAddress cellRangeAddress = new CellRangeAddress(rowIndex - 1, rowIndex - 1, colIndex, maxIndex + colIndex);
-        sheet.addMergedRegion(cellRangeAddress);
-        Row headerRow = sheet.createRow(rowIndex - 1);
-        Cell headerCell = headerRow.createCell(colIndex);
-        headerCell.setCellValue(headerTitle);
-        styleGenerator.setMergedRegionBorder(cellStyle, cellRangeAddress, sheet, workbook);
-        headerCell.setCellStyle(cellStyle);
+        if (StringUtils.isNotBlank(headerTitle)) {
+            int maxIndex = this.getMaxIndex(parameter);
+            // 合并单元格
+            CellRangeAddress cellRangeAddress = new CellRangeAddress(rowIndex - 1, rowIndex - 1, colIndex, maxIndex + colIndex);
+            sheet.addMergedRegion(cellRangeAddress);
+            // 创建行
+            Row headerRow = sheet.createRow(rowIndex - 1);
+            Cell headerCell = headerRow.createCell(colIndex);
+            // 设置标题
+            headerCell.setCellValue(headerTitle);
+            // 自定义标题边框样式
+            styleGenerator.setMergedRegionBorder(cellStyle, cellRangeAddress, sheet, workbook);
+            headerCell.setCellStyle(cellStyle);
+        }
 
-
+        // 填充表格
         Field[] fields = parameter.getWorkbookParameter().getBeanParameter().getFields();
         // 指定行减一：表示表头始终在数据上面一行
         Row row = sheet.createRow(rowIndex);

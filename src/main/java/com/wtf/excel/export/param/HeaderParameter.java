@@ -13,13 +13,13 @@ public class HeaderParameter {
     // sheet名称
     private String sheetName = "file export";
     // sheet下标
-    private int sheetIndex = 0;
+    private int sheetIndex;
     // 标题
     private String title = "";
     // 行的起始位置
-    private int rowIndex = 1;
+    private int rowIndex;
     // 列的起始位置
-    private int colIndex = 0;
+    private int colIndex;
 
     private Class<? extends StyleGenerator> styleGenerator = DefaultStyleGenerator.class;
 
